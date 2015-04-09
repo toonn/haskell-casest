@@ -18,7 +18,7 @@ read :: IConnection conn => conn -> TableName
             -> IO [[SqlValue]]
 read conn table =
     quickQuery' conn
-        SELECT * FROM "++ table
+        "SELECT * FROM "++ table
 
 -- Union : all s -> RA s -> RA s -> RA s
 union :: IConnection conn => conn -> TableName -> TableName
