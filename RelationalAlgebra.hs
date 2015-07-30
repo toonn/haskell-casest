@@ -6,7 +6,7 @@
           The Power of Pi
  
 -}
-{-# LANGUAGE GADTs, KindSignatures, DataKinds, TypeFamilies #-}
+--{-# LANGUAGE GADTs, KindSignatures, DataKinds, TypeFamilies #-}
 
 module RelationalAlgebra where
 
