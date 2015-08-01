@@ -66,10 +66,13 @@ same (Sorted schema1) (Sorted schema2) = same' schema1 schema2
       nm1 == nm2 && ty1 == ty2 && same' xs ys
     same' _ _ = False
 
-occurs :: String -> Schema -> Bool
-occurs nm (Sorted s) = nm `elem` map fst s
-
-type family Occurs (nm :: String) (s :: Schema) :: Bool
+--occurs :: String -> Schema -> Bool
+--occurs nm (Sorted s) = nm `elem` map fst s
+--
+--type family Occurs (nm :: String) (s :: Schema) :: Bool
+--
+--class Occurs (nm :: String) (s :: Schema) where
+--instance Occurs nm ((nm,u) : s') where
 
 lookup :: String -> Schema -> So (occurs nm s) -> U
 lookup nm (Sorted s) _p = lookup' nm s
