@@ -16,6 +16,11 @@ data Natty :: Nat -> * where
   Zy :: Natty Z
   Sy :: Natty n -> Natty (S n)
 
+natter :: Natty n -> Nat
+natter Zy = Z
+natter (Sy n) = S (natter n)
+
+
 data Fin :: Nat -> * where
   Zf :: Fin (S n)
   Sf :: Fin n -> Fin (S n)
@@ -23,10 +28,25 @@ data Fin :: Nat -> * where
 data Vec :: * -> Nat -> * where
   V0   :: Vec a Z
   (:>) :: a -> Vec a n -> Vec a (S n)
+infixr 5 :>
 
 vlookup :: Fin n -> Vec a n -> a
-vlookup (Zf) (a :> _) = a
+vlookup (Zf)   (a :> _)  = a
 vlookup (Sf n) (_ :> as) = vlookup n as
+
+vreplicate :: Natty n -> a -> Vec a n
+vreplicate Zy     _ = V0
+vreplicate (Sy n) a = a :> vreplicate n a
+
+vreverse :: Vec a n -> Vec a n
+vreverse V0 = V0
+vreverse (a :> V0) = a :> V0
+vreverse (a :> as) = vreverse' as a
+  where
+    vreverse' :: Vec a n -> a -> Vec a (S n)
+    vreverse' V0 x' = x' :> V0
+    vreverse' (x :> xs) x' = x :> vreverse' xs x'
+    
 
 data Matrix :: * -> Nat -> Nat -> * where
   Mat :: Vec (Vec a w) h -> Matrix a w h
@@ -53,8 +73,8 @@ data Clearry :: Clearance -> * where
   Highy :: Clearry High
   Gody  :: Clearry God
 
-data Position = Pos { x      :: Nat
-                    , y      :: Nat
+data Position = Pos { getX      :: Nat
+                    , getY      :: Nat
                     , matter :: Material
                     , clr    :: Clearance
                     }
@@ -84,10 +104,54 @@ data Path :: Color -> Position -> Position -> * where
 -- Examples
 
 exPath :: Path Red (Pos Z Z Gas Low) (Pos Z Z Gas Low)
-exPath = Pcons (Posy Zy Zy Gasy Lowy)
-                Next
-                (Pcons (Posy (Sy Zy) Zy Gasy Lowy)
-                       Back
-                       (Pcons (Posy Zy Zy Gasy Lowy)
-                              Stay
-                              P0))
+exPath = Pcons (Posy Zy Zy Gasy Lowy) Next
+        (Pcons (Posy (Sy Zy) Zy Gasy Lowy) Back
+        (Pcons (Posy Zy Zy Gasy Lowy) Stay P0))
+
+matterToPosVec :: Vec Material n -> Vec Material n -> Nat -> Nat
+                   -> Vec Position n
+matterToPosVec V0 V0 _ _ = V0
+matterToPosVec (mat :> mats) (under :> unders) x y =
+  Pos x y mat cl :> matterToPosVec mats unders (S x) y
+    where
+      clearance :: Material -> Material -> Clearance
+      clearance Gas   Gas   = High
+      clearance Gas   Solid = Low
+      clearance Solid _     = God
+      cl = clearance mat under
+
+matterToPosVecs :: Natty w -> Natty h -> Vec (Vec Material w) h
+                    -> Vec (Vec Position w) h
+matterToPosVecs _ _ V0 = V0
+matterToPosVecs w (Sy z) (mats :> matss) =
+  matterToPosVec mats (unders w matss Gas) Z y  :> matterToPosVecs w z matss
+    where
+      y = natter (Sy z)
+      unders :: Natty m -> Vec (Vec a m) n -> a -> Vec a m
+      unders m V0 fallback = vreplicate m fallback
+      unders _ (us :> _) _ = us
+
+mattersToMatrix :: Natty w -> Natty h -> Vec (Vec Material w) h
+                    -> Matrix Position w h
+mattersToMatrix w h matss = Mat (vreverse (matterToPosVecs w h matss))
+
+o :: Material
+o = Gas
+c :: Material
+c = Solid
+
+exampleLevel :: Matrix Position
+                        (S (S (S (S (S (S (S (S (S (S Z))))))))))
+                        (S (S (S (S (S (S (S Z)))))))
+exampleLevel = mattersToMatrix
+                  (Sy (Sy (Sy (Sy (Sy (Sy (Sy (Sy (Sy (Sy Zy))))))))))
+                  (Sy (Sy (Sy (Sy (Sy (Sy (Sy Zy)))))))
+                  (
+  (o :> o :> o :> o :> o :> o :> o :> o :> o :> o :> V0) :>
+  (o :> o :> o :> o :> o :> o :> c :> c :> c :> o :> V0) :>
+  (o :> o :> o :> o :> o :> o :> o :> o :> o :> o :> V0) :>
+  (o :> o :> o :> c :> c :> c :> o :> o :> o :> o :> V0) :>
+  (o :> o :> o :> o :> o :> o :> o :> o :> o :> o :> V0) :>
+  (c :> o :> o :> o :> o :> o :> o :> o :> o :> c :> V0) :>
+  (c :> c :> c :> c :> c :> o :> o :> c :> c :> c :> V0) :> V0)
+
