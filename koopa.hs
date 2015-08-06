@@ -11,19 +11,31 @@
 
 module Koopa where
 
+data Some :: (k -> *) -> * where
+  Like :: p x -> Some p
+
 data Nat = Z | S Nat
 data Natty :: Nat -> * where
   Zy :: Natty Z
   Sy :: Natty n -> Natty (S n)
-
 natter :: Natty n -> Nat
 natter Zy = Z
 natter (Sy n) = S (natter n)
+nattyer :: Nat -> Some Natty
+nattyer Z = Like Zy
+nattyer (S n) = case nattyer n of Like n -> Like (Sy n)
 
 
 data Fin :: Nat -> * where
   Zf :: Fin (S n)
   Sf :: Fin n -> Fin (S n)
+intToFin :: Natty n -> Integer -> Fin n
+intToFin Zy _ = error "Fin Z is an empty type"
+intToFin (Sy n) i
+  | i <  0 = error "Negative Integers cannot be represented by a finite natural"
+  | i == 0 = Zf
+  | i >  0 = Sf (intToFin n (i-1))
+
 
 data Vec :: * -> Nat -> * where
   V0   :: Vec a Z
@@ -51,8 +63,8 @@ vreverse (a :> as) = vreverse' as a
 data Matrix :: * -> Nat -> Nat -> * where
   Mat :: Vec (Vec a w) h -> Matrix a w h
 
-lookup :: Fin h -> Fin w -> Matrix a w h -> a
-lookup row column (Mat rows) = vlookup column (vlookup row rows)
+mlookup :: Fin h -> Fin w -> Matrix a w h -> a
+mlookup row column (Mat rows) = vlookup column (vlookup row rows)
 
 data Color = Green | Red
 data Colorry :: Color -> * where
@@ -66,12 +78,20 @@ data Material = Gas | Solid
 data Matty :: Material -> * where
   Gasy   :: Matty Gas
   Solidy :: Matty Solid
+mattyer :: Material -> Some Matty
+mattyer Gas = Like Gasy
+mattyer Solid = Like Solidy
 
 data Clearance = Low | High | God
 data Clearry :: Clearance -> * where
   Lowy  :: Clearry Low
   Highy :: Clearry High
   Gody  :: Clearry God
+clearryer :: Clearance -> Some Clearry
+clearryer Low = Like Lowy
+clearryer High = Like Highy
+clearryer God = Like Gody
+
 
 data Position = Pos { getX      :: Nat
                     , getY      :: Nat
@@ -141,12 +161,12 @@ c :: Material
 c = Solid
 
 exampleLevel :: Matrix Position
-                        (S (S (S (S (S (S (S (S (S (S Z))))))))))
-                        (S (S (S (S (S (S (S Z)))))))
+                       (S(S(S(S(S(S(S(S(S(S Z)))))))))) -- 10
+                       (S(S(S(S(S(S(S Z))))))) -- 7
 exampleLevel = mattersToMatrix
-                  (Sy (Sy (Sy (Sy (Sy (Sy (Sy (Sy (Sy (Sy Zy))))))))))
-                  (Sy (Sy (Sy (Sy (Sy (Sy (Sy Zy)))))))
-                  (
+                 (Sy(Sy(Sy(Sy(Sy(Sy(Sy(Sy(Sy(Sy Zy)))))))))) -- 10
+                 (Sy(Sy(Sy(Sy(Sy(Sy(Sy Zy))))))) -- 7
+                 (
   (o :> o :> o :> o :> o :> o :> o :> o :> o :> o :> V0) :>
   (o :> o :> o :> o :> o :> o :> c :> c :> c :> o :> V0) :>
   (o :> o :> o :> o :> o :> o :> o :> o :> o :> o :> V0) :>
@@ -155,3 +175,34 @@ exampleLevel = mattersToMatrix
   (c :> o :> o :> o :> o :> o :> o :> o :> o :> c :> V0) :>
   (c :> c :> c :> c :> c :> o :> o :> c :> c :> c :> V0) :> V0)
 
+
+ix :: Integer -> Fin (S(S(S(S(S(S(S(S(S(S Z)))))))))) -- 10
+ix = intToFin (Sy(Sy(Sy(Sy(Sy(Sy(Sy(Sy(Sy(Sy Zy)))))))))) -- 10
+
+iy :: Integer -> Fin (S(S(S(S(S(S(S Z))))))) -- 7
+iy = intToFin (Sy(Sy(Sy(Sy(Sy(Sy(Sy Zy))))))) -- 7
+
+p :: Fin (S(S(S(S(S(S(S(S(S(S Z))))))))))
+     -> Fin (S(S(S(S(S(S(S Z)))))))
+     -> Some Positionny
+p x y = Like (Posy xy yy my cly)
+  where
+    Pos x' y' m' cl' = mlookup y x exampleLevel
+    xy = case nattyer x' of Like xy -> xy
+    yy = case nattyer y' of Like yy -> yy
+    my = case mattyer m' of Like my -> my
+    cly = case clearryer cl' of Like cly -> cly
+
+red_path_one :: Path Red (Pos (S(S(S(S(S(S(S(S Z))))))))
+                              (S(S(S(S(S(S Z)))))) Gas Low)
+                         (Pos (S(S(S(S(S(S(S(S Z))))))))
+                              (S(S(S(S(S(S Z)))))) Gas Low)
+red_path_one = --Pcons (p (ix 7) (iy 6))
+               --      Back
+               --      Pcons (p (ix 6) (iy 6))
+               --            Next
+               --            Pcons (p (ix 7) (iy 6))
+               --                  Next
+               Pcons (p (ix 8) (iy 6))
+                     Stay
+                     P0
