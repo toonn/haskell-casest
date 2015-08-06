@@ -185,24 +185,24 @@ iy = intToFin (Sy(Sy(Sy(Sy(Sy(Sy(Sy Zy))))))) -- 7
 p :: Fin (S(S(S(S(S(S(S(S(S(S Z))))))))))
      -> Fin (S(S(S(S(S(S(S Z)))))))
      -> Some Positionny
-p x y = Like (Posy xy yy my cly)
-  where
-    Pos x' y' m' cl' = mlookup y x exampleLevel
-    xy = case nattyer x' of Like xy -> xy
-    yy = case nattyer y' of Like yy -> yy
-    my = case mattyer m' of Like my -> my
-    cly = case clearryer cl' of Like cly -> cly
+p x y | Pos x' y' m' cl' <- mlookup y x exampleLevel
+      , Like xy <- nattyer x'
+      , Like yy <- nattyer y'
+      , Like my <- mattyer m'
+      , Like cly <- clearryer cl'
+      = Like (Posy xy yy my cly)
 
-red_path_one :: Path Red (Pos (S(S(S(S(S(S(S(S Z))))))))
+redPathOne :: Path Red (Pos (S(S(S(S(S(S(S(S Z))))))))
                               (S(S(S(S(S(S Z)))))) Gas Low)
                          (Pos (S(S(S(S(S(S(S(S Z))))))))
                               (S(S(S(S(S(S Z)))))) Gas Low)
-red_path_one = --Pcons (p (ix 7) (iy 6))
+redPathOne | Like p86 <- p (ix 8) (iy 6)
+           = --Pcons (p (ix 7) (iy 6))
                --      Back
                --      Pcons (p (ix 6) (iy 6))
                --            Next
                --            Pcons (p (ix 7) (iy 6))
                --                  Next
-               Pcons (p (ix 8) (iy 6))
+               Pcons p86
                      Stay
                      P0
