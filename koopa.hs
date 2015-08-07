@@ -192,20 +192,17 @@ p x y | Pos x' y' m' cl' <- mlookup y x exampleLevel
       , Like cly <- clearryer cl'
       = Like (Posy xy yy my cly)
 
---pp :: Positionny (Pos (S(S(S(S(S(S(S(S Z)))))))) (S(S(S(S(S(S Z)))))) Gas Low)
-pp | Like p86 <- p (ix 8) (iy 6) = p86
-
---redPathOne :: Path Red (Pos (S(S(S(S(S(S(S(S Z))))))))
---                            (S(S(S(S(S(S Z)))))) Gas Low)
---                       (Pos (S(S(S(S(S(S(S(S Z))))))))
---                            (S(S(S(S(S(S Z)))))) Gas Low)
---redPathOne | Like p86 <- p (ix 8) (iy 6)
---           = --Pcons (p (ix 7) (iy 6))
---               --      Back
---               --      Pcons (p (ix 6) (iy 6))
---               --            Next
---               --            Pcons (p (ix 7) (iy 6))
---               --                  Next
---               Pcons p86
---                     Stay
---                     P0
+redPathOne :: Path Red (Pos (S(S(S(S(S(S(S(S Z))))))))
+                            (S(S(S(S(S(S Z)))))) Gas Low)
+                       (Pos (S(S(S(S(S(S(S(S Z))))))))
+                            (S(S(S(S(S(S Z)))))) Gas Low)
+redPathOne | Like p86 <- p (ix 8) (iy 6)
+           = --Pcons (p (ix 7) (iy 6))
+               --      Back
+               --      Pcons (p (ix 6) (iy 6))
+               --            Next
+               --            Pcons (p (ix 7) (iy 6))
+               --                  Next
+               Pcons p86
+                     Stay
+                     P0
