@@ -23,7 +23,7 @@ natter Zy = Z
 natter (Sy n) = S (natter n)
 nattyer :: Nat -> Some Natty
 nattyer Z = Like Zy
-nattyer (S n) = case nattyer n of Like n -> Like (Sy n)
+nattyer (S n) = case nattyer n of Like m -> Like (Sy m)
 
 
 data Fin :: Nat -> * where
@@ -192,17 +192,20 @@ p x y | Pos x' y' m' cl' <- mlookup y x exampleLevel
       , Like cly <- clearryer cl'
       = Like (Posy xy yy my cly)
 
-redPathOne :: Path Red (Pos (S(S(S(S(S(S(S(S Z))))))))
-                              (S(S(S(S(S(S Z)))))) Gas Low)
-                         (Pos (S(S(S(S(S(S(S(S Z))))))))
-                              (S(S(S(S(S(S Z)))))) Gas Low)
-redPathOne | Like p86 <- p (ix 8) (iy 6)
-           = --Pcons (p (ix 7) (iy 6))
-               --      Back
-               --      Pcons (p (ix 6) (iy 6))
-               --            Next
-               --            Pcons (p (ix 7) (iy 6))
-               --                  Next
-               Pcons p86
-                     Stay
-                     P0
+--pp :: Positionny (Pos (S(S(S(S(S(S(S(S Z)))))))) (S(S(S(S(S(S Z)))))) Gas Low)
+pp | Like p86 <- p (ix 8) (iy 6) = p86
+
+--redPathOne :: Path Red (Pos (S(S(S(S(S(S(S(S Z))))))))
+--                            (S(S(S(S(S(S Z)))))) Gas Low)
+--                       (Pos (S(S(S(S(S(S(S(S Z))))))))
+--                            (S(S(S(S(S(S Z)))))) Gas Low)
+--redPathOne | Like p86 <- p (ix 8) (iy 6)
+--           = --Pcons (p (ix 7) (iy 6))
+--               --      Back
+--               --      Pcons (p (ix 6) (iy 6))
+--               --            Next
+--               --            Pcons (p (ix 7) (iy 6))
+--               --                  Next
+--               Pcons p86
+--                     Stay
+--                     P0
