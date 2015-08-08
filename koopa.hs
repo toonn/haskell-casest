@@ -21,9 +21,11 @@ data Natty :: Nat -> * where
 natter :: Natty n -> Nat
 natter Zy = Z
 natter (Sy n) = S (natter n)
-nattyer :: Nat -> Some Natty
-nattyer Z = Like Zy
-nattyer (S n) = case nattyer n of Like m -> Like (Sy m)
+data NATTY :: * where
+  Nat :: Natty n -> NATTY
+nattyer :: Nat -> NATTY
+nattyer Z = Nat Zy
+nattyer (S n) = case nattyer n of Nat m -> Nat (Sy m)
 
 
 data Fin :: Nat -> * where
@@ -78,19 +80,23 @@ data Material = Gas | Solid
 data Matty :: Material -> * where
   Gasy   :: Matty Gas
   Solidy :: Matty Solid
-mattyer :: Material -> Some Matty
-mattyer Gas = Like Gasy
-mattyer Solid = Like Solidy
+data MATTY :: * where
+  Mater :: Matty m -> MATTY
+mattyer :: Material -> MATTY
+mattyer Gas = Mater Gasy
+mattyer Solid = Mater Solidy
 
 data Clearance = Low | High | God
 data Clearry :: Clearance -> * where
   Lowy  :: Clearry Low
   Highy :: Clearry High
   Gody  :: Clearry God
-clearryer :: Clearance -> Some Clearry
-clearryer Low = Like Lowy
-clearryer High = Like Highy
-clearryer God = Like Gody
+data CLEARRY :: * where
+  Clear :: Clearry cl -> CLEARRY
+clearryer :: Clearance -> CLEARRY
+clearryer Low = Clear Lowy
+clearryer High = Clear Highy
+clearryer God = Clear Gody
 
 
 data Position = Pos { getX      :: Nat
@@ -101,6 +107,15 @@ data Position = Pos { getX      :: Nat
 data Positionny :: Position -> * where
   Posy :: Natty x -> Natty y -> Matty m -> Clearry cl
             -> Positionny (Pos x y m cl)
+data POSITIONNY :: * where
+  Posit :: Positionny p -> POSITIONNY
+positionnyer :: Position -> POSITIONNY
+positionnyer (Pos x y m cl) 
+  | Nat xY <- nattyer x
+  , Nat yY <- nattyer y
+  , Mater mY <- mattyer m
+  , Clear clY <- clearryer cl
+  = Posit (Posy xY yY mY clY)
 
 -- data CoClr :: Color -> Clearance -> * where
 --   RedClr   :: CoClr c Low
@@ -184,19 +199,22 @@ iy = intToFin (Sy(Sy(Sy(Sy(Sy(Sy(Sy Zy))))))) -- 7
 
 p :: Fin (S(S(S(S(S(S(S(S(S(S Z))))))))))
      -> Fin (S(S(S(S(S(S(S Z)))))))
-     -> Some Positionny
+     -> POSITIONNY
 p x y | Pos x' y' m' cl' <- mlookup y x exampleLevel
-      , Like xy <- nattyer x'
-      , Like yy <- nattyer y'
-      , Like my <- mattyer m'
-      , Like cly <- clearryer cl'
-      = Like (Posy xy yy my cly)
+      , Nat xy <- nattyer x'
+      , Nat yy <- nattyer y'
+      , Mater my <- mattyer m'
+      , Clear cly <- clearryer cl'
+      = Posit (Posy xy yy my cly)
 
 redPathOne :: Path Red (Pos (S(S(S(S(S(S(S(S Z))))))))
                             (S(S(S(S(S(S Z)))))) Gas Low)
                        (Pos (S(S(S(S(S(S(S(S Z))))))))
                             (S(S(S(S(S(S Z)))))) Gas Low)
-redPathOne | Like p86 <- p (ix 8) (iy 6)
+-- This doesn't work with the pattern guard on a call to p because
+-- p86 :: Positionny p while Pcons p86 Stay P0 expects P86 to be of type
+-- Positionny (Pos 8 6 Gas Low) (with Nat's instead of Integers)
+redPathOne -- | Posit p86 <- p (ix 8) (iy 6)
            = --Pcons (p (ix 7) (iy 6))
                --      Back
                --      Pcons (p (ix 6) (iy 6))
@@ -206,3 +224,6 @@ redPathOne | Like p86 <- p (ix 8) (iy 6)
                Pcons p86
                      Stay
                      P0
+  where
+    p86 = Posy (Sy(Sy(Sy(Sy(Sy(Sy(Sy(Sy Zy))))))))
+               (Sy(Sy(Sy(Sy(Sy(Sy Zy)))))) Gasy Lowy
