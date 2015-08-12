@@ -126,10 +126,10 @@ instance CoClr c Low
 instance CoClr Green High
 
 data Follows :: Position -> Position -> Color -> * where
-  Stay :: Follows (pos x y Gas Low) (pos x y Gas Low) c
-  Next :: CoClr c cl => Follows (pos (S x) y Gas cl) (pos x y Gas Low) c
-  Back :: CoClr c cl => Follows (pos x y Gas cl) (pos (S x) y Gas Low) c
-  Fall :: Follows (pos x y Gas cl) (pos x (S y) Gas High) c
+  Stay :: Follows (Pos x y Gas Low) (Pos x y Gas Low) c
+  Next :: CoClr c cl => Follows (Pos (S x) y Gas cl) (Pos x y Gas Low) c
+  Back :: CoClr c cl => Follows (Pos x y Gas cl) (Pos (S x) y Gas Low) c
+  Fall :: Follows (Pos x y Gas cl) (Pos x (S y) Gas High) c
 
 data Path :: Color -> Position -> Position -> * where
   P0 :: Path c p p
@@ -207,23 +207,119 @@ p x y | Pos x' y' m' cl' <- mlookup y x exampleLevel
       , Clear cly <- clearryer cl'
       = Posit (Posy xy yy my cly)
 
-redPathOne :: Path Red (Pos (S(S(S(S(S(S(S(S Z))))))))
+
+p01 :: Positionny (Pos Z (S Z) Solid God)
+p01 = Posy Zy (Sy Zy) Solidy Gody
+p11 :: Positionny (Pos (S Z) (S Z) Gas Low)
+p11 = Posy (Sy Zy) (Sy Zy) Gasy Lowy
+p21 :: Positionny (Pos (S(S Z)) (S Z) Gas Low)
+p21 = Posy (Sy(Sy Zy)) (Sy Zy) Gasy Lowy
+p22 :: Positionny (Pos (S(S Z)) (S(S Z)) Gas High)
+p22 = Posy (Sy(Sy Zy)) (Sy(Sy Zy)) Gasy Highy
+p23 :: Positionny (Pos (S(S Z)) (S(S(S Z))) Gas High)
+p23 = Posy (Sy(Sy Zy)) (Sy(Sy(Sy Zy))) Gasy Highy
+p24 :: Positionny (Pos (S(S Z)) (S(S(S(S Z)))) Gas High)
+p24 = Posy (Sy(Sy Zy)) (Sy(Sy(Sy(Sy Zy)))) Gasy Highy
+p31 :: Positionny (Pos (S(S(S Z))) (S Z) Gas Low)
+p31 = Posy (Sy(Sy(Sy Zy))) (Sy Zy) Gasy Lowy
+p34 :: Positionny (Pos (S(S(S Z))) (S(S(S(S Z)))) Gas Low)
+p34 = Posy (Sy(Sy(Sy Zy))) (Sy(Sy(Sy(Sy Zy)))) Gasy Lowy
+p41 :: Positionny (Pos (S(S(S(S Z)))) (S Z) Gas Low)
+p41 = Posy (Sy(Sy(Sy(Sy Zy)))) (Sy Zy) Gasy Lowy
+p44 :: Positionny (Pos (S(S(S(S Z)))) (S(S(S(S Z)))) Gas Low)
+p44 = Posy (Sy(Sy(Sy(Sy Zy)))) (Sy(Sy(Sy(Sy Zy)))) Gasy Lowy
+p51 :: Positionny (Pos (S(S(S(S(S Z))))) (S Z) Gas High)
+p51 = Posy (Sy(Sy(Sy(Sy(Sy Zy))))) (Sy Zy) Gasy Highy
+p54 :: Positionny (Pos (S(S(S(S(S Z))))) (S(S(S(S Z)))) Gas Low)
+p54 = Posy (Sy(Sy(Sy(Sy(Sy Zy))))) (Sy(Sy(Sy(Sy Zy)))) Gasy Lowy
+p55 :: Positionny (Pos (S(S(S(S(S Z))))) (S(S(S(S(S Z))))) Gas High)
+p55 = Posy (Sy(Sy(Sy(Sy(Sy Zy))))) (Sy(Sy(Sy(Sy(Sy Zy))))) Gasy Highy
+p56 :: Positionny (Pos (S(S(S(S(S Z))))) (S(S(S(S(S(S Z)))))) Gas High)
+p56 = Posy (Sy(Sy(Sy(Sy(Sy Zy))))) (Sy(Sy(Sy(Sy(Sy(Sy Zy)))))) Gasy Highy
+p66 :: Positionny (Pos (S(S(S(S(S(S Z)))))) (S(S(S(S(S(S Z)))))) Gas Low)
+p66 = Posy (Sy(Sy(Sy(Sy(Sy(Sy Zy))))))
+           (Sy(Sy(Sy(Sy(Sy(Sy Zy)))))) Gasy Lowy
+p76 :: Positionny (Pos (S(S(S(S(S(S(S Z))))))) (S(S(S(S(S(S Z)))))) Gas Low)
+p76 = Posy (Sy(Sy(Sy(Sy(Sy(Sy(Sy Zy)))))))
+           (Sy(Sy(Sy(Sy(Sy(Sy Zy)))))) Gasy Lowy
+p86 :: Positionny (Pos (S(S(S(S(S(S(S(S Z)))))))) (S(S(S(S(S(S Z)))))) Gas Low)
+p86 = Posy (Sy(Sy(Sy(Sy(Sy(Sy(Sy(Sy Zy))))))))
+           (Sy(Sy(Sy(Sy(Sy(Sy Zy)))))) Gasy Lowy
+
+redPathOne :: Path Red (Pos (S(S(S(S(S(S(S Z)))))))
                             (S(S(S(S(S(S Z)))))) Gas Low)
                        (Pos (S(S(S(S(S(S(S(S Z))))))))
                             (S(S(S(S(S(S Z)))))) Gas Low)
--- This doesn't work with the pattern guard on a call to p because
--- p86 :: Positionny p while Pcons p86 Stay P0 expects P86 to be of type
--- Positionny (Pos 8 6 Gas Low) (with Nat's instead of Integers)
-redPathOne -- | Posit p86 <- p (ix 8) (iy 6)
-           = --Pcons (p (ix 7) (iy 6))
-               --      Back
-               --      Pcons (p (ix 6) (iy 6))
-               --            Next
-               --            Pcons (p (ix 7) (iy 6))
-               --                  Next
-               Pcons p86
-                     Stay
-                     P0
-  where
-    p86 = Posy (Sy(Sy(Sy(Sy(Sy(Sy(Sy(Sy Zy))))))))
-               (Sy(Sy(Sy(Sy(Sy(Sy Zy)))))) Gasy Lowy
+redPathOne = Pcons p76 Back
+           $ Pcons p66 Next
+           $ Pcons p76 Next
+           $ Pcons p86 Stay P0
+
+redPathTwo :: Path Red (Pos (S(S Z))    (S Z) Gas Low)
+                       (Pos (S(S(S Z))) (S Z) Gas Low)
+redPathTwo = Pcons p21 Back
+           $ Pcons p11 Next
+           $ Pcons p21 Next
+           $ Pcons p31 Next
+           $ Pcons p41 Back
+           $ Pcons p31 Stay P0
+
+-- Because Stay only allows a position with material Gas to follow from
+-- a position with material Gas, this is a type error
+-- redNoPathOne :: Path Red (Pos (S Z) (S Z) Gas Low)
+--                          (Pos Z (S Z) Solid God)
+-- redNoPathOne = Pcons p11 Back
+--              $ Pcons p01 Stay P0
+
+-- Red Koopa Troopa can't step into a wall
+-- This is for the same reason as in redNoPathOne but with the Back
+-- constructor
+-- redNoPathTwo :: Path Red (Pos (S Z) (S Z) Gas Low)
+--                          (Pos Z (S Z) Solid God)
+-- redNoPathTwo = Pcons p11 Back P0
+
+-- Red Koopa Troopa can't step into air
+-- Here the problem is that there is no instance for CoClr Red High which
+-- is necessary for Next, however the solution GHC suggests is to add it
+-- while it was actually not defined on purpose
+-- redNoPathThree :: Path Red (Pos (S(S(S(S Z)))) (S Z) Gas Low)
+--                            (Pos (S(S(S(S(S Z))))) (S Z) Gas High)
+-- redNoPathThree = Pcons p41 Next P0
+
+-- Any path that is valid for red Koopa Troopas, is also valid for green
+-- Koopa Troopas because we did not constrain Koopa Troopas to only turn
+-- when there is an obstacle
+greenPathOne :: Path Green (Pos (S(S(S(S(S(S(S Z)))))))
+                                (S(S(S(S(S(S Z)))))) Gas Low)
+                           (Pos (S(S(S(S(S(S(S(S Z))))))))
+                                (S(S(S(S(S(S Z)))))) Gas Low)
+greenPathOne = Pcons p76 Back
+             $ Pcons p66 Next
+             $ Pcons p76 Next
+             $ Pcons p86 Stay P0
+
+greenPathTwo :: Path Green (Pos (S(S(S(S(S(S(S Z)))))))
+                                (S(S(S(S(S(S Z)))))) Gas Low)
+                           (Pos (S(S(S(S(S Z))))) Z Gas Low)
+greenPathTwo = Pcons p76 Back
+             $ Pcons p66 Back
+             $ Pcons p56 Fall
+             $ Pcons p55 Fall
+             $ Pcons p54 Back
+             $ Pcons p44 Back
+             $ Pcons p34 Back
+             $ Pcons p24 Fall
+             $ Pcons p23 Fall
+             $ Pcons p22 Fall
+             $ Pcons p21 Back
+             $ Pcons p11 Next
+             $ Pcons p21 Next
+             $ Pcons p31 Next
+             $ Pcons p41 Next
+             $ Pcons p51 Fall P0
+
+-- Green Koopa Troopa can't step into a wall
+-- Exactly the same as for redNoPathTwo
+-- greenNoPathOne :: Path Green (Pos (S Z) (S Z) Gas Low)
+--                              (Pos Z (S Z) Solid God)
+-- greenNoPathOne = Pcons p11 Back P0
