@@ -208,41 +208,24 @@ p x y | Pos x' y' m' cl' <- mlookup y x exampleLevel
       = Posit (Posy xy yy my cly)
 
 
-p01 :: Positionny (Pos Z (S Z) Solid Ultimate)
 p01 = Posy Zy (Sy Zy) Solidy Ultimatey
-p11 :: Positionny (Pos (S Z) (S Z) Gas Low)
 p11 = Posy (Sy Zy) (Sy Zy) Gasy Lowy
-p21 :: Positionny (Pos (S(S Z)) (S Z) Gas Low)
 p21 = Posy (Sy(Sy Zy)) (Sy Zy) Gasy Lowy
-p22 :: Positionny (Pos (S(S Z)) (S(S Z)) Gas High)
 p22 = Posy (Sy(Sy Zy)) (Sy(Sy Zy)) Gasy Highy
-p23 :: Positionny (Pos (S(S Z)) (S(S(S Z))) Gas High)
 p23 = Posy (Sy(Sy Zy)) (Sy(Sy(Sy Zy))) Gasy Highy
-p24 :: Positionny (Pos (S(S Z)) (S(S(S(S Z)))) Gas High)
 p24 = Posy (Sy(Sy Zy)) (Sy(Sy(Sy(Sy Zy)))) Gasy Highy
-p31 :: Positionny (Pos (S(S(S Z))) (S Z) Gas Low)
 p31 = Posy (Sy(Sy(Sy Zy))) (Sy Zy) Gasy Lowy
-p34 :: Positionny (Pos (S(S(S Z))) (S(S(S(S Z)))) Gas Low)
 p34 = Posy (Sy(Sy(Sy Zy))) (Sy(Sy(Sy(Sy Zy)))) Gasy Lowy
-p41 :: Positionny (Pos (S(S(S(S Z)))) (S Z) Gas Low)
 p41 = Posy (Sy(Sy(Sy(Sy Zy)))) (Sy Zy) Gasy Lowy
-p44 :: Positionny (Pos (S(S(S(S Z)))) (S(S(S(S Z)))) Gas Low)
 p44 = Posy (Sy(Sy(Sy(Sy Zy)))) (Sy(Sy(Sy(Sy Zy)))) Gasy Lowy
-p51 :: Positionny (Pos (S(S(S(S(S Z))))) (S Z) Gas High)
 p51 = Posy (Sy(Sy(Sy(Sy(Sy Zy))))) (Sy Zy) Gasy Highy
-p54 :: Positionny (Pos (S(S(S(S(S Z))))) (S(S(S(S Z)))) Gas Low)
 p54 = Posy (Sy(Sy(Sy(Sy(Sy Zy))))) (Sy(Sy(Sy(Sy Zy)))) Gasy Lowy
-p55 :: Positionny (Pos (S(S(S(S(S Z))))) (S(S(S(S(S Z))))) Gas High)
 p55 = Posy (Sy(Sy(Sy(Sy(Sy Zy))))) (Sy(Sy(Sy(Sy(Sy Zy))))) Gasy Highy
-p56 :: Positionny (Pos (S(S(S(S(S Z))))) (S(S(S(S(S(S Z)))))) Gas High)
 p56 = Posy (Sy(Sy(Sy(Sy(Sy Zy))))) (Sy(Sy(Sy(Sy(Sy(Sy Zy)))))) Gasy Highy
-p66 :: Positionny (Pos (S(S(S(S(S(S Z)))))) (S(S(S(S(S(S Z)))))) Gas Low)
 p66 = Posy (Sy(Sy(Sy(Sy(Sy(Sy Zy))))))
            (Sy(Sy(Sy(Sy(Sy(Sy Zy)))))) Gasy Lowy
-p76 :: Positionny (Pos (S(S(S(S(S(S(S Z))))))) (S(S(S(S(S(S Z)))))) Gas Low)
 p76 = Posy (Sy(Sy(Sy(Sy(Sy(Sy(Sy Zy)))))))
            (Sy(Sy(Sy(Sy(Sy(Sy Zy)))))) Gasy Lowy
-p86 :: Positionny (Pos (S(S(S(S(S(S(S(S Z)))))))) (S(S(S(S(S(S Z)))))) Gas Low)
 p86 = Posy (Sy(Sy(Sy(Sy(Sy(Sy(Sy(Sy Zy))))))))
            (Sy(Sy(Sy(Sy(Sy(Sy Zy)))))) Gasy Lowy
 
