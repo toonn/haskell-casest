@@ -86,17 +86,17 @@ mattyer :: Material -> MATTY
 mattyer Gas = Mater Gasy
 mattyer Solid = Mater Solidy
 
-data Clearance = Low | High | God
+data Clearance = Low | High | Ultimate
 data Clearry :: Clearance -> * where
   Lowy  :: Clearry Low
   Highy :: Clearry High
-  Gody  :: Clearry God
+  Ultimatey  :: Clearry Ultimate
 data CLEARRY :: * where
   Clear :: Clearry cl -> CLEARRY
 clearryer :: Clearance -> CLEARRY
 clearryer Low = Clear Lowy
 clearryer High = Clear Highy
-clearryer God = Clear Gody
+clearryer Ultimate = Clear Ultimatey
 
 
 data Position = Pos { getX      :: Nat
@@ -152,7 +152,7 @@ matterToPosVec (mat :> mats) (under :> unders) x y =
       clearance :: Material -> Material -> Clearance
       clearance Gas   Gas   = High
       clearance Gas   Solid = Low
-      clearance Solid _     = God
+      clearance Solid _     = Ultimate
       cl = clearance mat under
 
 matterToPosVecs :: Natty w -> Natty h -> Vec (Vec Material w) h
@@ -208,8 +208,8 @@ p x y | Pos x' y' m' cl' <- mlookup y x exampleLevel
       = Posit (Posy xy yy my cly)
 
 
-p01 :: Positionny (Pos Z (S Z) Solid God)
-p01 = Posy Zy (Sy Zy) Solidy Gody
+p01 :: Positionny (Pos Z (S Z) Solid Ultimate)
+p01 = Posy Zy (Sy Zy) Solidy Ultimatey
 p11 :: Positionny (Pos (S Z) (S Z) Gas Low)
 p11 = Posy (Sy Zy) (Sy Zy) Gasy Lowy
 p21 :: Positionny (Pos (S(S Z)) (S Z) Gas Low)
@@ -267,7 +267,7 @@ redPathTwo = Pcons p21 Back
 -- Because Stay only allows a position with material Gas to follow from
 -- a position with material Gas, this is a type error
 -- redNoPathOne :: Path Red (Pos (S Z) (S Z) Gas Low)
---                          (Pos Z (S Z) Solid God)
+--                          (Pos Z (S Z) Solid Ultimate)
 -- redNoPathOne = Pcons p11 Back
 --              $ Pcons p01 Stay P0
 
@@ -275,7 +275,7 @@ redPathTwo = Pcons p21 Back
 -- This is for the same reason as in redNoPathOne but with the Back
 -- constructor
 -- redNoPathTwo :: Path Red (Pos (S Z) (S Z) Gas Low)
---                          (Pos Z (S Z) Solid God)
+--                          (Pos Z (S Z) Solid Ultimate)
 -- redNoPathTwo = Pcons p11 Back P0
 
 -- Red Koopa Troopa can't step into air
@@ -321,5 +321,5 @@ greenPathTwo = Pcons p76 Back
 -- Green Koopa Troopa can't step into a wall
 -- Exactly the same as for redNoPathTwo
 -- greenNoPathOne :: Path Green (Pos (S Z) (S Z) Gas Low)
---                              (Pos Z (S Z) Solid God)
+--                              (Pos Z (S Z) Solid Ultimate)
 -- greenNoPathOne = Pcons p11 Back P0
