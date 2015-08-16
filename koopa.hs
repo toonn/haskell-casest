@@ -7,12 +7,8 @@
 
 {-# LANGUAGE GADTs, DataKinds, KindSignatures #-}
 {-# LANGUAGE MultiParamTypeClasses, FlexibleInstances #-}
-{-# LANGUAGE PolyKinds #-}
 
 module Koopa where
-
-data Some :: (k -> *) -> * where
-  Like :: p x -> Some p
 
 data Nat = Z | S Nat
 data Natty :: Nat -> * where
@@ -116,10 +112,6 @@ positionnyer (Pos x y m cl)
   , Mater mY <- mattyer m
   , Clear clY <- clearryer cl
   = Posit (Posy xY yY mY clY)
-
--- data CoClr :: Color -> Clearance -> * where
---   RedClr   :: CoClr c Low
---   GreenClr :: CoClr Green High
 
 class CoClr (c :: Color) (cl :: Clearance)
 instance CoClr c Low
